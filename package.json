@@ -8,6 +8,7 @@
     "build": "vite build",
     "build:ios": "vite build && npm run generate-icons",
     "build:vercel": "vite build",
+    "build:github": "vite build --base=/yundong/",
     "generate-icons": "node scripts/generate-icons.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
