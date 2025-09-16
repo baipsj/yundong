@@ -1,0 +1,13 @@
+
+<svg width="2048" height="2732" viewBox="0 0 2048 2732" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="2048" height="2732" fill="url(#bgGrad)"/>
+  <text x="50%" y="45%" text-anchor="middle" fill="white" font-size="307.2" font-weight="bold">💪</text>
+  <text x="50%" y="55%" text-anchor="middle" fill="white" font-size="81.92" opacity="0.9">运动APP</text>
+  <text x="50%" y="60%" text-anchor="middle" fill="white" font-size="51.2" opacity="0.7">让运动成为习惯</text>
+</svg>
