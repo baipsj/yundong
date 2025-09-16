@@ -8,17 +8,16 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
       manifest: {
-        name: '运动APP - 健康生活助手',
+        name: '运动APP',
         short_name: '运动APP',
-        description: '专业的运动健身应用，帮助你养成运动习惯，记录运动成果',
+        description: '运动健身应用',
         theme_color: '#667eea',
-        background_color: '#242424',
+        background_color: '#ffffff',
         display: 'standalone',
         scope: '/',
         start_url: '/',
-        orientation: 'portrait',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -29,28 +28,11 @@ export default defineConfig({
             src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png'
-          },
-          {
-            src: 'apple-touch-icon.png',
-            sizes: '180x180',
-            type: 'image/png',
-            purpose: 'apple touch icon'
-          },
-          {
-            src: 'maskable-icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
           }
-        ],
-        categories: ['health', 'fitness', 'lifestyle'],
-        lang: 'zh-CN'
+        ]
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}']
-      },
-      devOptions: {
-        enabled: true
       }
     })
   ],
