@@ -8,6 +8,7 @@ const WorkoutPlan = ({ onStatsUpdate }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingExercise, setEditingExercise] = useState(null);
   const [activeWorkout, setActiveWorkout] = useState(null);
+  const [showExerciseLibrary, setShowExerciseLibrary] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -134,6 +135,29 @@ const WorkoutPlan = ({ onStatsUpdate }) => {
         onStatsUpdate?.();
         alert(`🎉 运动完成！用时 ${duration} 秒`);
       }
+    }
+  };
+
+  // 从运动库添加运动
+  const addFromLibrary = (exercise) => {
+    const newExercise = addUserExercise({
+      name: exercise.name,
+      description: exercise.description,
+      category: exercise.category,
+      reps: exercise.defaultReps,
+      sets: exercise.defaultSets,
+      duration: exercise.defaultDuration,
+      notes: '',
+      originalId: exercise.id,
+      type: 'from_library'
+    });
+    
+    if (newExercise) {
+      loadUserExercises();
+      setShowExerciseLibrary(false);
+      alert(`✅ "${exercise.name}" 已添加到你的运动计划！`);
+    } else {
+      alert('添加失败，请重试');
     }
   };
 
@@ -273,34 +297,90 @@ const WorkoutPlan = ({ onStatsUpdate }) => {
     );
   };
 
-  const allExercises = [...defaultExercises, ...userExercises];
+  // 渲染运动库模态框
+  const renderExerciseLibrary = () => {
+    if (!showExerciseLibrary) return null;
+
+    return (
+      <div className="modal-overlay" onClick={() => setShowExerciseLibrary(false)}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <h3>🏋️‍♂️ 运动库</h3>
+            <button 
+              className="close-button"
+              onClick={() => setShowExerciseLibrary(false)}
+            >
+              ×
+            </button>
+          </div>
+          
+          <div className="library-grid">
+            {defaultExercises.map(exercise => (
+              <div key={exercise.id} className="library-item">
+                <div className="library-item-header">
+                  <h4>{exercise.name}</h4>
+                  <span className="category-tag">{exercise.category}</span>
+                </div>
+                
+                <p className="library-description">{exercise.description}</p>
+                
+                <div className="library-details">
+                  {exercise.defaultDuration > 0 ? (
+                    <span className="detail">🕰️ {exercise.defaultDuration}秒</span>
+                  ) : (
+                    <span className="detail">🔄 {exercise.defaultReps}次 × {exercise.defaultSets}组</span>
+                  )}
+                </div>
+                
+                <button 
+                  className="button primary small"
+                  onClick={() => addFromLibrary(exercise)}
+                >
+                  ➕ 添加到计划
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="workout-plan">
       <div className="plan-header">
         <h2>📅 运动计划</h2>
-        <button 
-          className="button primary"
-          onClick={() => setShowAddForm(!showAddForm)}
-        >
-          <Plus size={16} />
-          添加运动
-        </button>
+        <div className="header-buttons">
+          <button 
+            className="button secondary"
+            onClick={() => setShowExerciseLibrary(true)}
+          >
+            🏋️‍♂️ 运动库
+          </button>
+          <button 
+            className="button primary"
+            onClick={() => setShowAddForm(!showAddForm)}
+          >
+            <Plus size={16} />
+            添加运动
+          </button>
+        </div>
       </div>
 
       {renderWorkoutTimer()}
       {renderAddForm()}
+      {renderExerciseLibrary()}
 
       <div className="exercises-section">
-        <h3>🏋️‍♂️ 我的运动项目</h3>
+        <h3>🏋️‍♂️ 我的运动计划</h3>
         
-        {allExercises.length === 0 ? (
+        {userExercises.length === 0 ? (
           <div className="empty-state card">
-            <p>还没有运动项目，点击上方按钮添加吧！</p>
+            <p>还没有制定运动计划，点击上方"运动库"按钮从运动库中选择，或点击"添加运动"自定义新运动！</p>
           </div>
         ) : (
           <div className="exercises-list">
-            {allExercises.map(exercise => (
+            {userExercises.map(exercise => (
               <div key={exercise.id} className="exercise-item card">
                 <div className="exercise-header">
                   <div className="exercise-info">
@@ -321,22 +401,18 @@ const WorkoutPlan = ({ onStatsUpdate }) => {
                       开始
                     </button>
                     
-                    {exercise.isCustom && (
-                      <>
-                        <button 
-                          className="button secondary small"
-                          onClick={() => handleEdit(exercise)}
-                        >
-                          <Edit size={14} />
-                        </button>
-                        <button 
-                          className="button danger small"
-                          onClick={() => handleDelete(exercise.id)}
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </>
-                    )}
+                    <button 
+                      className="button secondary small"
+                      onClick={() => handleEdit(exercise)}
+                    >
+                      <Edit size={14} />
+                    </button>
+                    <button 
+                      className="button danger small"
+                      onClick={() => handleDelete(exercise.id)}
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
 
@@ -350,7 +426,7 @@ const WorkoutPlan = ({ onStatsUpdate }) => {
                     <div className="detail-item">
                       <RotateCcw size={16} />
                       <span>
-                        {exercise.reps || exercise.defaultReps}次 × 
+                        {exercise.reps || exercise.defaultReps}次 ×
                         {exercise.sets || exercise.defaultSets}组
                       </span>
                     </div>
@@ -384,6 +460,11 @@ const WorkoutPlan = ({ onStatsUpdate }) => {
         .plan-header h2 {
           margin: 0;
           font-size: 1.8rem;
+        }
+
+        .header-buttons {
+          display: flex;
+          gap: 10px;
         }
 
         .workout-timer {
@@ -427,6 +508,123 @@ const WorkoutPlan = ({ onStatsUpdate }) => {
           gap: 15px;
           justify-content: center;
           margin-top: 25px;
+        }
+
+        /* 运动库模态框样式 */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+          padding: 20px;
+        }
+
+        .modal-content {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border-radius: 15px;
+          max-width: 900px;
+          width: 100%;
+          max-height: 80vh;
+          overflow-y: auto;
+          padding: 25px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 25px;
+          padding-bottom: 15px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-header h3 {
+          margin: 0;
+          color: white;
+          font-size: 1.5rem;
+        }
+
+        .close-button {
+          background: none;
+          border: none;
+          color: white;
+          font-size: 24px;
+          cursor: pointer;
+          padding: 5px 10px;
+          border-radius: 5px;
+          transition: background 0.3s;
+        }
+
+        .close-button:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        .library-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 20px;
+        }
+
+        .library-item {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          padding: 20px;
+          transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .library-item:hover {
+          transform: translateY(-2px);
+          border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .library-item-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 10px;
+        }
+
+        .library-item h4 {
+          margin: 0;
+          color: white;
+          font-size: 1.1rem;
+        }
+
+        .category-tag {
+          background: rgba(102, 126, 234, 0.3);
+          color: #667eea;
+          padding: 3px 8px;
+          border-radius: 12px;
+          font-size: 11px;
+          font-weight: 500;
+        }
+
+        .library-description {
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 13px;
+          margin: 0 0 15px 0;
+          line-height: 1.4;
+        }
+
+        .library-details {
+          margin-bottom: 15px;
+        }
+
+        .library-details .detail {
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
         }
 
         .exercises-section h3 {
@@ -531,6 +729,10 @@ const WorkoutPlan = ({ onStatsUpdate }) => {
             text-align: center;
           }
           
+          .header-buttons {
+            justify-content: center;
+          }
+          
           .timer-header {
             flex-direction: column;
             gap: 15px;
@@ -548,6 +750,15 @@ const WorkoutPlan = ({ onStatsUpdate }) => {
           
           .form-actions {
             flex-direction: column;
+          }
+
+          .modal-content {
+            margin: 10px;
+            max-height: 90vh;
+          }
+
+          .library-grid {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>
