@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运动APP - 简化版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .app-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .app-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .exercise-list {
+            list-style: none;
+        }
+        
+        .exercise-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .exercise-name {
+            font-weight: 500;
+        }
+        
+        .exercise-count {
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            opacity: 0.8;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1>💪 运动APP</h1>
+            <p>让运动成为习惯，让健康伴随一生</p>
+        </header>
+
+        <div id="dashboard">
+            <div class="card">
+                <h2>📊 今日统计</h2>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="todayCount">0</div>
+                        <div class="stat-label">今日运动</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="weekCount">0</div>
+                        <div class="stat-label">本周运动</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCount">0</div>
+                        <div class="stat-label">总运动数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="streakCount">0</div>
+                        <div class="stat-label">连续天数</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🚀 快速开始</h2>
+                <button class="btn" onclick="showWorkoutPlan()">💪 开始运动</button>
+                <button class="btn" onclick="showExerciseLibrary()">📚 查看动作库</button>
+                <button class="btn" onclick="showWorkoutRecord()">📊 运动记录</button>
+            </div>
+        </div>
+
+        <div id="workoutPlan" class="hidden">
+            <div class="card">
+                <h2>💪 运动计划</h2>
+                <button class="btn" onclick="addWorkout('俯卧撑')">俯卧撑 x 10</button>
+                <button class="btn" onclick="addWorkout('仰卧起坐')">仰卧起坐 x 15</button>
+                <button class="btn" onclick="addWorkout('深蹲')">深蹲 x 20</button>
+                <button class="btn" onclick="addWorkout('跑步')">跑步 30分钟</button>
+                <button class="btn" onclick="showDashboard()">返回首页</button>
+            </div>
+        </div>
+
+        <div id="exerciseLibrary" class="hidden">
+            <div class="card">
+                <h2>📚 动作库</h2>
+                <ul class="exercise-list">
+                    <li class="exercise-item">
+                        <span class="exercise-name">俯卧撑</span>
+                        <span class="exercise-count">胸部 • 手臂</span>
+                    </li>
+                    <li class="exercise-item">
+                        <span class="exercise-name">仰卧起坐</span>
+                        <span class="exercise-count">腹部 • 核心</span>
+                    </li>
+                    <li class="exercise-item">
+                        <span class="exercise-name">深蹲</span>
+                        <span class="exercise-count">腿部 • 臀部</span>
+                    </li>
+                    <li class="exercise-item">
+                        <span class="exercise-name">跑步</span>
+                        <span class="exercise-count">有氧 • 全身</span>
+                    </li>
+                    <li class="exercise-item">
+                        <span class="exercise-name">平板支撑</span>
+                        <span class="exercise-count">核心 • 稳定</span>
+                    </li>
+                </ul>
+                <button class="btn" onclick="showDashboard()">返回首页</button>
+            </div>
+        </div>
+
+        <div id="workoutRecord" class="hidden">
+            <div class="card">
+                <h2>📊 运动记录</h2>
+                <ul class="exercise-list" id="recordList">
+                    <li class="exercise-item">
+                        <span class="exercise-name">暂无记录</span>
+                        <span class="exercise-count">开始运动吧！</span>
+                    </li>
+                </ul>
+                <button class="btn" onclick="showDashboard()">返回首页</button>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>坚持运动，健康生活 🌟</p>
+        </footer>
+    </div>
+
+    <script>
+        // 简单的本地存储
+        function getStats() {
+            const stats = localStorage.getItem('workoutStats');
+            return stats ? JSON.parse(stats) : {
+                todayCount: 0,
+                weekCount: 0,
+                totalCount: 0,
+                streakCount: 0,
+                records: []
+            };
+        }
+
+        function saveStats(stats) {
+            localStorage.setItem('workoutStats', JSON.stringify(stats));
+        }
+
+        function updateDisplay() {
+            const stats = getStats();
+            document.getElementById('todayCount').textContent = stats.todayCount;
+            document.getElementById('weekCount').textContent = stats.weekCount;
+            document.getElementById('totalCount').textContent = stats.totalCount;
+            document.getElementById('streakCount').textContent = stats.streakCount;
+
+            // 更新记录列表
+            const recordList = document.getElementById('recordList');
+            if (stats.records.length === 0) {
+                recordList.innerHTML = '<li class="exercise-item"><span class="exercise-name">暂无记录</span><span class="exercise-count">开始运动吧！</span></li>';
+            } else {
+                recordList.innerHTML = stats.records.slice(-5).map(record => 
+                    `<li class="exercise-item">
+                        <span class="exercise-name">${record.name}</span>
+                        <span class="exercise-count">${record.date}</span>
+                    </li>`
+                ).join('');
+            }
+        }
+
+        function addWorkout(name) {
+            const stats = getStats();
+            const today = new Date().toISOString().split('T')[0];
+            
+            stats.todayCount++;
+            stats.weekCount++;
+            stats.totalCount++;
+            stats.records.push({
+                name: name,
+                date: today,
+                time: new Date().toLocaleTimeString()
+            });
+
+            saveStats(stats);
+            updateDisplay();
+            
+            alert(`完成 ${name}！继续加油！💪`);
+            showDashboard();
+        }
+
+        function showDashboard() {
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('workoutPlan').classList.add('hidden');
+            document.getElementById('exerciseLibrary').classList.add('hidden');
+            document.getElementById('workoutRecord').classList.add('hidden');
+        }
+
+        function showWorkoutPlan() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('workoutPlan').classList.remove('hidden');
+            document.getElementById('exerciseLibrary').classList.add('hidden');
+            document.getElementById('workoutRecord').classList.add('hidden');
+        }
+
+        function showExerciseLibrary() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('workoutPlan').classList.add('hidden');
+            document.getElementById('exerciseLibrary').classList.remove('hidden');
+            document.getElementById('workoutRecord').classList.add('hidden');
+        }
+
+        function showWorkoutRecord() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('workoutPlan').classList.add('hidden');
+            document.getElementById('exerciseLibrary').classList.add('hidden');
+            document.getElementById('workoutRecord').classList.remove('hidden');
+        }
+
+        // 页面加载时更新显示
+        updateDisplay();
+    </script>
+</body>
+</html>
